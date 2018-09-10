@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">SportChampsCoding</string>
+    <string name="name">name</string>
+    <string name="gdp">gdp(in USD)</string>
+    <string name="region">Region</string>
+    <string name="country">Country</string>
+    <string name="sortby">Sort By</string>
+    <string name="year">Year</string>
+    <string name="progressText">0% Completed</string>
+</resources>
