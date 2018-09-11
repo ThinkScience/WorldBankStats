@@ -33,10 +33,7 @@ class MainActivityInstrumentationTest {
 
     @Rule
     @JvmField
-    public val rule  = ActivityTestRule(MainActivity::class.java)
-    @Rule
-    @JvmField
-    val rule2  = ActivityTestRule(CountryViewActivity::class.java)
+    val rule  = ActivityTestRule(MainActivity::class.java)
 
     @Test
     fun useAppContext() {
@@ -71,7 +68,7 @@ class MainActivityInstrumentationTest {
 
     @Test
     fun test_check_recyclerViewClick_toastMessageCheck(){
-        val activity = rule2.activity
+        val activity = rule.activity
         val expectedToastMessage = " Item : South Sudan view got clicked"
         onView(withId(R.id.rv_worlddata))
                 .perform(RecyclerViewActions.actionOnItemAtPosition<MyRegionViewAdapter.ViewHolder>(0, click()))
