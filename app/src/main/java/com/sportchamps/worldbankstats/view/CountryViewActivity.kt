@@ -20,7 +20,7 @@ import com.sportchamps.worldbankstats.model.data.pojo.RegionD
  */
 class CountryViewActivity: AppCompatActivity() {
     val TAG:String = "SportChampsD-CActivity"
-    private lateinit var regionData:RegionD
+    private var regionData:RegionD? = null
     private var rvCountryList:MutableList<Country> = mutableListOf()
     private lateinit var rv_countryData: RecyclerView
     lateinit var sortView: Spinner
@@ -28,8 +28,9 @@ class CountryViewActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.country_activity_main)
-        regionData = intent.extras.get("Country_Data") as RegionD
-        rvCountryList.addAll(regionData.countryList)
+        regionData = intent?.extras?.get("Country_Data") as RegionD?
+        if(null != regionData)
+           rvCountryList.addAll(regionData!!.countryList)
         initActivityView()
     }
 

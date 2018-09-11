@@ -47,7 +47,8 @@ class NetworkRepository(var mvInteractionInterface: UserRepository.MVInteraction
         lateinit var networkResponse: Call<ResponseBody>
         lateinit var response :Response<ResponseBody>
         var bufferString = StringBuffer()
-        val numPages = getNetworkPageCount(AppConstants.Companion.OBJECT_TYPE.GDP)
+        var numPages =0
+        numPages = getNetworkPageCount(AppConstants.Companion.OBJECT_TYPE.GDP)
         for(itr in 1..numPages) {
             bufferString.delete(0,bufferString.length)
             networkResponse = WorldBankRestApi.getRestClientService().getCountriesGdpData((itr+1),
@@ -56,7 +57,7 @@ class NetworkRepository(var mvInteractionInterface: UserRepository.MVInteraction
             if (response.isSuccessful) {
                 Log.d(TAG, " Got successful response from API for PAGE NUM : ${itr}")
                 bufferString.append(response.body()?.string())
-                var worldGdp:WorldGdp = getWorldGdpPojo(bufferString)
+                var worldGdp:WorldGdp? = getWorldGdpPojo(bufferString)
                 if(null != worldGdp) {
                     countryGdpDataList.add(worldGdp)
                     saveToDb(worldGdp)
@@ -64,7 +65,7 @@ class NetworkRepository(var mvInteractionInterface: UserRepository.MVInteraction
             }
             if(itr%4 == 0){
                 val progressPercent:Float = (itr/numPages.toFloat())*100
-                Log.i(TAG, "Progress Percentage : $progressPercent")
+            //    Log.i(TAG, "Progress Percentage : $progressPercent")
                 mvInteractionInterface?.onProgressChange(progressPercent.toInt())
             }
         }
@@ -81,21 +82,23 @@ class NetworkRepository(var mvInteractionInterface: UserRepository.MVInteraction
         var worldDataList:MutableList<WorldData> = mutableListOf<WorldData>()
         var bufferString = StringBuffer()
         val numPages = getNetworkPageCount(AppConstants.Companion.OBJECT_TYPE.INFO)
-        Log.d(TAG, " Page Count for Country Info request : $numPages")
+   //     Log.d(TAG, " Page Count for Country Info request : $numPages")
         for(itr in 1..numPages) {
             networkResponse = WorldBankRestApi.getRestClientService().getCountriesData((itr+1),
                     "json")
             response = networkResponse.execute()
             bufferString.delete(0,bufferString.length)
             if (response.isSuccessful) {
-                Log.d(TAG, " Got successful response from API for PAGE NUM : ${itr}")
+          //      Log.d(TAG, " Got successful response from API for PAGE NUM : ${itr}")
                 bufferString.append(response.body()?.string())
-                var worldData:WorldData = getWorldInfoPojo(bufferString)
-                worldDataList.add(worldData)
-                updateDb(worldData)
-                Log.d(TAG, " Printing Page Number : $itr  Information")
+                var worldData:WorldData? = getWorldInfoPojo(bufferString)
+                if(null != worldData) {
+                    worldDataList.add(worldData)
+                    updateDb(worldData)
+                }
+              //  Log.d(TAG, " Printing Page Number : $itr  Information")
                 val progressPercent:Float = (itr/numPages.toFloat())*100
-                Log.d(TAG, "Progress Percentage : $progressPercent")
+            //    Log.d(TAG, "Progress Percentage : $progressPercent")
                 mvInteractionInterface?.onProgressChange(progressPercent.toInt())
             }
         }
@@ -120,8 +123,9 @@ class NetworkRepository(var mvInteractionInterface: UserRepository.MVInteraction
             val responseStringBuf:StringBuffer =  bufferString.append(response.body()?.string(),
                     0,1000)
             val pageHeader = CommonUtil.getPageHeader(responseStringBuf)
-            pageCount = pageHeader.pages
-            Log.d(TAG," Page Header info  Total Page count :  "+pageHeader.pages)
+            if(null != pageHeader)
+                pageCount = pageHeader.pages
+            Log.d(TAG," Page Header info  Total Page count :  "+pageHeader?.pages)
         }
         return pageCount
     }

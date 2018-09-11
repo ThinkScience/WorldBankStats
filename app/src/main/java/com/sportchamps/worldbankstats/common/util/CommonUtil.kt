@@ -71,7 +71,7 @@ class CommonUtil {
           * WorldBank API call returns data in improper JSON
           * GET HEADER info from JSON
          */
-        fun getPageHeader(networkData: StringBuffer):PageHeader{
+        fun getPageHeader(networkData: StringBuffer):PageHeader?{
             var headerString = ""
             var index = 1
             while(networkData[index] != '[' ){
@@ -79,8 +79,13 @@ class CommonUtil {
             }
             headerString = networkData.subSequence(1,index-1) as String
             val gson = Gson()
-            var pageHeader:PageHeader = gson.fromJson(headerString, PageHeader::class.java)
-            Log.d("SportChampsD", " Header data : "+headerString)
+            var pageHeader:PageHeader? = null
+            try {
+                pageHeader = gson.fromJson(headerString, PageHeader::class.java)
+            }catch(ex:Exception){
+                ex.printStackTrace()
+            }
+          //  Log.d("SportChampsD", " Header data : "+headerString)
             return pageHeader
         }
 
@@ -88,11 +93,16 @@ class CommonUtil {
          * WorldBank API call returns data in improper JSON
          * FIX the json and get WorldGDP POJO from it
         */
-        fun getWorldGdpPojo(networkJson:StringBuffer):WorldGdp{
+        fun getWorldGdpPojo(networkJson:StringBuffer):WorldGdp?{
             val missingHeadGdpJson = "{ "+
                     "\"countriesGdpData\":"
             val gson = Gson()
-            var gsonData = gson.fromJson(fixJsonGetData(missingHeadGdpJson,networkJson).toString(), WorldGdp::class.java)
+            var gsonData:WorldGdp? = null
+            try {
+                gsonData = gson.fromJson(fixJsonGetData(missingHeadGdpJson, networkJson).toString(), WorldGdp::class.java)
+            }catch ( ex:Exception){
+                ex.printStackTrace()
+            }
             return gsonData
         }
 
@@ -100,11 +110,16 @@ class CommonUtil {
         * WorldBank API call returns data in improper JSON
         * FIX the json and get WORLDINFO POJO from it
        */
-        fun getWorldInfoPojo(networkJson:StringBuffer):WorldData{
+        fun getWorldInfoPojo(networkJson:StringBuffer):WorldData?{
             val missingHeadInfoJson = "{ "+
                     "\"countries\":"
             val gson = Gson()
-            var gsonData = gson.fromJson(fixJsonGetData(missingHeadInfoJson,networkJson).toString(), WorldData::class.java)
+            var gsonData:WorldData? = null
+            try {
+                gsonData = gson.fromJson(fixJsonGetData(missingHeadInfoJson, networkJson).toString(), WorldData::class.java)
+            }catch ( ex:Exception){
+                ex.printStackTrace()
+            }
             return gsonData
         }
 
